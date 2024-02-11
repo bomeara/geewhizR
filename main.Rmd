@@ -26,7 +26,7 @@ library(ape)
 ```
 
 
-So R knows to use them. You only need to install them once but call library each time; the following code does this for us automatically. This uses a workflow from https://statsandr.com/blog/an-efficient-way-to-install-and-load-r-packages/ to make this easier for teaching
+So R knows to use them. You only need to install them once but call library each time; the following code does this for us automatically. This uses a workflow from https://statsandr.com/blog/an-efficient-way-to-install-and-load-r-packages/ to make this easier for teaching.
 
 ```{r, message=FALSE, warning=FALSE}
 
@@ -170,7 +170,7 @@ knitr::kable(salamander_summary) # print the data in a nice table
 
 ### Images
 
-Let's get some images of the most common salamander in the area, `r salamander_summary$species[which.max(salamander_summary$n_observations)]`. We'll use the `rinat` package to get data from the iNaturalist API.
+Let's get some images of the most commonly identified salamander in the area, `r salamander_summary$species[which.max(salamander_summary$n_observations)]`. We'll use the `rinat` package to get data from the iNaturalist API.
 
 ```{r}
 obs <- rinat::get_inat_obs(query=salamander_summary$species[which.max(salamander_summary$n_observations)], maxresults=50, bounds=c(min_lat, min_lon, max_lat, max_lon)) # southern latitude, western longitude, northern latitude, and eastern longitude
@@ -200,7 +200,7 @@ Let's make a map of the salamander observations. We'll use the `ggmap` package t
 
 location <- c(min_lon, min_lat,  max_lon, max_lat) #left, bottom, right, top, using variables from above
 
-knox_area_map <- get_map(location, source="stamen") # stamen is free; google maps requires an API key
+knox_area_map <- get_stadiamap(location)
 plotted_map <- ggmap(knox_area_map)
 plotted_map <- plotted_map + geom_point(data=salamander_occurrences, aes(x=decimalLongitude, y=decimalLatitude), colour="red", size=0.5)
 print(plotted_map)
