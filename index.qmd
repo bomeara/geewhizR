@@ -1,0 +1,100 @@
+---
+title: "Gee whiz, R!"
+format:
+  html:
+    embed-resources: true
+    keep-md: false
+editor: visual
+execute:
+  echo: false
+  message: false
+  warning: false
+---
+
+This is showing what can be done with R in quarto. 
+
+::: {.panel-tabset}
+
+## Datasaurus
+
+```{r}
+source('functions.R')
+get_needed_packages()
+data('datasaurus_dozen', package="datasauRus")
+```
+
+Showing summary information for the `datasaurus_dozen` dataset:
+
+```{r}
+library(knitr)
+kable(summarize_dataset(my_data=datasaurus_dozen))
+```
+
+Plot of data all together:
+
+```{r}
+#| echo: true
+ggplot(datasaurus_dozen, aes(x=x, y=y)) + geom_point(alpha=0.2)
+```
+
+## Basic plot 
+
+Looks all the same, right? Maybe if we plot the data by dataset:
+
+```{r}
+print(plot_dataset(my_data=datasaurus_dozen))
+```
+
+
+## Map
+
+We pull information from the Global Biodiversity Information Facility (GBIF) to get the locations of salamanders, then `leaflet` to plot them. For simplicity, we only have special colors for the seven most commonly recorded species, but you can click on the "Other" points to see what they are, too.
+
+```{r}
+#| cache: true
+salamander_data <- get_locations()
+plot_top_x_species(salamander_data, max_species=7)
+```
+
+
+## Phylogeny
+
+Great scientists steal (with attribution). We can use `datelife` to get a phylogeny for the salamanders from published studies. 
+
+```{r}
+#| echo: true
+#| fig.height: 10
+#| fig-align: center
+#| fig-width: 10
+
+salamander_tree <- get_datelife_tree(summarize_salamanders(salamander_data))
+strap::geoscalePhylo(salamander_tree, units="Period", cex.tip=1, cex.age=1, cex.ts=1)	
+
+```
+
+## Images
+
+iNaturalist stores lots of information from community scientists, including photos (and this information later flows into GBIF). We can include these photos. Here, we use research grade images of the Eastern Newt, *Notophthalmus viridescens*.
+
+```{r}
+inat_results <- get_inat_observations(focal_taxon="Notophthalmus viridescens")
+```
+
+Here's one image. It's from the `r inat_results$place_guess[1]` on `r inat_results$observed_on[1]` by `r inat_results$user_name[1]`.
+
+`r knitr::include_graphics(inat_results$image_url[1])`
+
+Here's another image. It's from the `r inat_results$place_guess[2]` on `r inat_results$observed_on[2]` by `r inat_results$user_name[2]`.
+
+`r knitr::include_graphics(inat_results$image_url[2])`
+
+And a third image. It's from the `r inat_results$place_guess[3]` on `r inat_results$observed_on[3]` by `r inat_results$user_name[3]`.
+
+`r knitr::include_graphics(inat_results$image_url[3])`
+
+Fourth image. It's from the `r inat_results$place_guess[4]` on `r inat_results$observed_on[4]` by `r inat_results$user_name[4]`.
+
+`r knitr::include_graphics(inat_results$image_url[4])`
+
+:::
+
