@@ -2,8 +2,17 @@
 
 Intro to R for teaching.
 
-Download the main.Rmd file. You can open it in RStudio and knit it. You can also run it in terminal with the following command:
+Learning objectives:
 
-Rscript -e "rmarkdown::render('main.Rmd')"
+* Wow, R can do some cool things
+* We can automate boring steps and gets lots of data
+* Functions are our friends
+* Organize code, include comments
+* Quarto can do fun things
 
-And it will make a main.docx file.
+To run this, you can do any of the following:
+
+* `source(run.R)` from within R
+* `Rscript run.R` from a command line
+* `quarto render index.qmd` to make the web page
+* Open `index.qmd` in Rstudio and render
