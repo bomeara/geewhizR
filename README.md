@@ -12,7 +12,7 @@ Learning objectives:
 
 To run this, you can do any of the following:
 
-* `source(run.R)` from within R
+* `source('run.R')` from within R
 * `Rscript run.R` from a command line
 * `quarto render index.qmd` to make the web page
 * Open `index.qmd` in Rstudio and render
