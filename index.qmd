@@ -1,5 +1,6 @@
 ---
 title: "Gee whiz, R!"
+author: "Brian O'Meara"
 format:
   html:
     embed-resources: true
@@ -9,13 +10,17 @@ execute:
   echo: false
   message: false
   warning: false
+  freeze: false
+  cache: false
+bibliography: references.bib
 ---
 
-This is showing what can be done with R in quarto. 
+This is showing what can be done with R in quarto. This page is [here](https://bomeara.github.io/geewhizR/) but see the source [here](https://github.com/bomeara/geewhizR). Look at the [functions.R](https://github.com/bomeara/geewhizR/blob/main/functions.R) file for the underlying functions, and [run.R](https://github.com/bomeara/geewhizR/blob/main/run.R) for doing this with base R. I also include [bad.R](https://github.com/bomeara/geewhizR/blob/main/bad.R) to provide an example of what not to do. A slightly more advanced version of the good way would convert `run.R` into a set of targets for use with the `targets` package [@landau2021], which lets you do more complex workflows. To run the R version, you can do `Rscript run.R` from the command line or `source('run.R')` in R; to do quarto, you can do `quarto render index.qmd` from the command line or use the "Render" button in RStudio.
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ## Datasaurus
+
+First, we are going to use the `datasauRus` package [@datasauRus] to show the "Datasaurus Dozen" dataset. We can first investigate it with some basic summary stats with `dplyr` [@dplyr] and a plot using `ggplot2` [@ggplot2].
 
 ```{r}
 source('functions.R')
@@ -23,11 +28,11 @@ get_needed_packages()
 data('datasaurus_dozen', package="datasauRus")
 ```
 
-Showing summary information for the `datasaurus_dozen` dataset:
+Showing summary information for the `datasaurus_dozen` dataset, using `knitr` [@knitr] to make it look nice:
 
 ```{r}
 library(knitr)
-kable(summarize_dataset(my_data=datasaurus_dozen))
+knitr::kable(summarize_dataset(my_data=datasaurus_dozen))
 ```
 
 Plot of data all together:
@@ -37,18 +42,19 @@ Plot of data all together:
 ggplot(datasaurus_dozen, aes(x=x, y=y)) + geom_point(alpha=0.2)
 ```
 
-## Basic plot 
+## Basic plot
 
-Looks all the same, right? Maybe if we plot the data by dataset:
+Looks all the same, right? Maybe if we plot the data by dataset, using `facet_wrap` in `ggplot2`
 
 ```{r}
 print(plot_dataset(my_data=datasaurus_dozen))
 ```
 
+Moral of the story: LOOK AT YOUR DATA. This finds all sorts of problems: having -99 instead of NA for missing data, having a single outlier that was measured in millimeters not meters, and so on.
 
 ## Map
 
-We pull information from the Global Biodiversity Information Facility (GBIF) to get the locations of salamanders, then `leaflet` to plot them. For simplicity, we only have special colors for the seven most commonly recorded species, but you can click on the "Other" points to see what they are, too.
+We pull information from the Global Biodiversity Information Facility (GBIF) to get the locations of salamanders using `rgbif` [@rgbif], then `leaflet` [@leaflet] to plot them. For simplicity, we only have special colors for the seven most commonly recorded species, but you can click on the "Other" points to see what they are, too.
 
 ```{r}
 #| cache: true
@@ -56,10 +62,9 @@ salamander_data <- get_locations()
 plot_top_x_species(salamander_data, max_species=7)
 ```
 
-
 ## Phylogeny
 
-Great scientists steal (with attribution). We can use `datelife` to get a phylogeny for the salamanders from published studies. 
+Great scientists steal (with attribution -- this is a modification of a quote allegedly said by Pablo Picasso). We can use `datelife` [@datelife] to get a phylogeny for the salamanders from published studies, using data from [Open Tree of Life](https://www.inaturalist.org) [@mctavish2015].
 
 ```{r}
 #| echo: true
@@ -74,7 +79,7 @@ strap::geoscalePhylo(salamander_tree, units="Period", cex.tip=1, cex.age=1, cex.
 
 ## Images
 
-iNaturalist stores lots of information from community scientists, including photos (and this information later flows into GBIF). We can include these photos. Here, we use research grade images of the Eastern Newt, *Notophthalmus viridescens*.
+[iNaturalist](https://www.inaturalist.org) stores lots of information from community scientists, including photos (and this information later flows into GBIF). We can include these photos. Here, we use research grade images of the Eastern Newt, *Notophthalmus viridescens*, using `rinat` [@rinat].
 
 ```{r}
 inat_results <- get_inat_observations(focal_taxon="Notophthalmus viridescens")
@@ -82,19 +87,27 @@ inat_results <- get_inat_observations(focal_taxon="Notophthalmus viridescens")
 
 Here's one image. It's from the `r inat_results$place_guess[1]` on `r inat_results$observed_on[1]` by `r inat_results$user_name[1]`.
 
-`r knitr::include_graphics(inat_results$image_url[1])`
+```{r, fig.alt = "Image of an Eastern Newt from iNaturalist"}
+knitr::include_graphics(inat_results$image_url[1]) 
+```
 
 Here's another image. It's from the `r inat_results$place_guess[2]` on `r inat_results$observed_on[2]` by `r inat_results$user_name[2]`.
 
-`r knitr::include_graphics(inat_results$image_url[2])`
+```{r, fig.alt = "Image of an Eastern Newt from iNaturalist"}
+knitr::include_graphics(inat_results$image_url[2]) 
+```
 
 And a third image. It's from the `r inat_results$place_guess[3]` on `r inat_results$observed_on[3]` by `r inat_results$user_name[3]`.
 
-`r knitr::include_graphics(inat_results$image_url[3])`
+```{r, fig.alt = "Image of an Eastern Newt from iNaturalist"}
+knitr::include_graphics(inat_results$image_url[3]) 
+```
 
 Fourth image. It's from the `r inat_results$place_guess[4]` on `r inat_results$observed_on[4]` by `r inat_results$user_name[4]`.
 
-`r knitr::include_graphics(inat_results$image_url[4])`
-
+```{r, fig.alt = "Image of an Eastern Newt from iNaturalist"}
+knitr::include_graphics(inat_results$image_url[4]) 
+```
 :::
 
+## Citations
