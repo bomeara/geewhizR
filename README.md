@@ -2,6 +2,8 @@
 
 Intro to R for teaching.
 
+See a web page at <https://bomeara.github.io/geewhizR>
+
 Learning objectives:
 
 * Wow, R can do some cool things
